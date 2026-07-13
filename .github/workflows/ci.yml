@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Initialize Airflow DB
+        run: |
+          export AIRFLOW_HOME=$GITHUB_WORKSPACE/.airflow
+          export AIRFLOW__CORE__DAGS_FOLDER=$GITHUB_WORKSPACE/dags
+          airflow db init
+      - name: Smoke test - extract, transform, load tasks
+        run: |
+          export AIRFLOW_HOME=$GITHUB_WORKSPACE/.airflow
+          export AIRFLOW__CORE__DAGS_FOLDER=$GITHUB_WORKSPACE/dags
+          airflow tasks test sales_etl_daily extract 2024-01-01
+          airflow tasks test sales_etl_daily transform 2024-01-01
+          airflow tasks test sales_etl_daily load 2024-01-01
