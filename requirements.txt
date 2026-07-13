@@ -1,1 +1,4 @@
 apache-airflow>=2.7.0,<3.0
+great_expectations>=1.0,<2.0
+pandas>=2.0
+pytest>=8.0.0
