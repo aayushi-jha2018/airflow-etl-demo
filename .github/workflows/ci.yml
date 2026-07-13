@@ -21,11 +21,11 @@ jobs:
         run: |
           export AIRFLOW_HOME=$GITHUB_WORKSPACE/.airflow
           export AIRFLOW__CORE__DAGS_FOLDER=$GITHUB_WORKSPACE/dags
+          export AIRFLOW__CORE__LOAD_EXAMPLES=False
           airflow db migrate
-      - name: Smoke test - extract, transform, load tasks
+      - name: Smoke test - run the full DAG end-to-end
         run: |
           export AIRFLOW_HOME=$GITHUB_WORKSPACE/.airflow
           export AIRFLOW__CORE__DAGS_FOLDER=$GITHUB_WORKSPACE/dags
-          airflow tasks test sales_etl_daily extract 2024-01-01
-          airflow tasks test sales_etl_daily transform 2024-01-01
-          airflow tasks test sales_etl_daily load 2024-01-01
+          export AIRFLOW__CORE__LOAD_EXAMPLES=False
+          airflow dags test sales_etl_daily 2024-01-01
