@@ -17,6 +17,8 @@ jobs:
           python-version: "3.11"
       - name: Install dependencies
         run: pip install -r requirements.txt
+      - name: Run data quality unit tests
+        run: pytest tests/ -v
       - name: Initialize Airflow DB
         run: |
           export AIRFLOW_HOME=$GITHUB_WORKSPACE/.airflow
