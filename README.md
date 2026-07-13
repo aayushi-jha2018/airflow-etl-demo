@@ -1,5 +1,8 @@
 # airflow-etl-demo
 
+[![CI](https://github.com/aayushi-jha2018/airflow-etl-demo/actions/workflows/ci.yml/badge.svg)](https://github.com/aayushi-jha2018/airflow-etl-demo/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+
 A small Airflow-orchestrated ETL demo: extract daily sales data, transform and clean it, and load it into a warehouse-ready file. This mirrors the batch pipeline patterns described in my [portfolio](https://github.com/aayushi-jha2018/portfolio) (Airflow, AWS Glue/EMR), scaled down to something you can run locally without cloud credentials.
 
 ## Architecture
