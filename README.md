@@ -42,14 +42,14 @@ airflow-etl-demo/
 ```bash
 pip install -r requirements.txt
 export AIRFLOW_HOME=$(pwd)/.airflow
-airflow db init
+airflow db migrate
 airflow dags list          # confirms sales_etl_daily is discovered
-airflow tasks test sales_etl_daily extract 2024-01-01
-airflow tasks test sales_etl_daily transform 2024-01-01
-airflow tasks test sales_etl_daily load 2024-01-01
+airflow dags test sales_etl_daily 2024-01-01
 ```
 
 Point Airflow at this repo's `dags/` folder (via `AIRFLOW_HOME`'s `airflow.cfg`, `dags_folder` setting) so it picks up `sales_etl_dag.py`.
+
+To debug a single task in isolation, you can use `airflow tasks test sales_etl_daily <extract|transform|load> 2024-01-01`. Note that this runs the task standalone and does not persist XCom to the metadata database, so chaining separate `tasks test` calls will not pass data between tasks the way `dags test` does.
 
 ## What this demonstrates
 
