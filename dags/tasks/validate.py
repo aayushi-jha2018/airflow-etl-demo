@@ -31,22 +31,26 @@ def validate_sales_data(records: List[Dict[str, object]]) -> bool:
     df = pd.DataFrame(records)
 
     context = gx.get_context()
-    validator = context.sources.pandas_default.read_dataframe(df)
+    data_source = context.data_sources.add_pandas("sales_data_source")
+    data_asset = data_source.add_dataframe_asset(name="transformed_sales")
+    batch_definition = data_asset.add_batch_definition_whole_dataframe("transformed_sales_batch")
+    batch = batch_definition.get_batch(batch_parameters={"dataframe": df})
 
-    validator.expect_column_values_to_not_be_null("order_id")
-    validator.expect_column_values_to_be_unique("order_id")
-    validator.expect_column_values_to_be_in_set("region", EXPECTED_REGIONS)
-    validator.expect_column_values_to_be_between("quantity", min_value=1)
-    validator.expect_column_values_to_be_between("total_amount", min_value=0)
+    expectations = [
+        gx.expectations.ExpectColumnValuesToNotBeNull(column="order_id"),
+        gx.expectations.ExpectColumnValuesToBeUnique(column="order_id"),
+        gx.expectations.ExpectColumnValuesToBeInSet(column="region", value_set=EXPECTED_REGIONS),
+        gx.expectations.ExpectColumnValuesToBeBetween(column="quantity", min_value=1),
+        gx.expectations.ExpectColumnValuesToBeBetween(column="total_amount", min_value=0),
+    ]
 
-    result = validator.validate()
+    failed_columns = []
+    for expectation in expectations:
+        result = batch.validate(expectation)
+        if not result.success:
+            failed_columns.append(expectation.column)
 
-    if not result["success"]:
-        failed_columns = [
-            r["expectation_config"]["kwargs"].get("column", "?")
-            for r in result["results"]
-            if not r["success"]
-        ]
+    if failed_columns:
         raise DataQualityError(f"Data quality checks failed for columns: {failed_columns}")
 
     return True
