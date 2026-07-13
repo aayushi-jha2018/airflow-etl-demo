@@ -21,7 +21,7 @@ jobs:
         run: |
           export AIRFLOW_HOME=$GITHUB_WORKSPACE/.airflow
           export AIRFLOW__CORE__DAGS_FOLDER=$GITHUB_WORKSPACE/dags
-          airflow db init
+          airflow db migrate
       - name: Smoke test - extract, transform, load tasks
         run: |
           export AIRFLOW_HOME=$GITHUB_WORKSPACE/.airflow
